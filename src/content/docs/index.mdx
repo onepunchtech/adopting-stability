@@ -1,40 +1,116 @@
 ---
-title: Welcome to Starlight
-description: Get started building your docs site with Starlight.
-template: splash # Remove or comment out this line to display the site sidebar on this page.
-hero:
-  tagline: Congrats on setting up a new Starlight project!
-  image:
-    file: ../../assets/houston.webp
-  actions:
-    - text: Example Guide
-      link: /guides/example/
-      icon: right-arrow
-    - text: Read the Starlight docs
-      link: https://starlight.astro.build
-      icon: external
-      variant: minimal
+title: Adopting Stability
+description: A hands-on workshop for adopting Nix to improve stability, safety, and reproducibility in software development.
 ---
 
-import { Card, CardGrid } from '@astrojs/starlight/components';
+*A hands-on workshop for adopting Nix to improve the stability of software development.*
 
-## Next steps
+---
 
-<CardGrid stagger>
-	<Card title="Update content" icon="pencil">
-		Edit `src/content/docs/index.mdx` to see this page change.
-	</Card>
-	<Card title="Change page layout" icon="document">
-		Delete `template: splash` in `src/content/docs/index.mdx` to display a
-		sidebar on this page.
-	</Card>
-	<Card title="Add new content" icon="add-document">
-		Add Markdown or MDX files to `src/content/docs` to create new pages.
-	</Card>
-	<Card title="Configure your site" icon="setting">
-		Edit your `sidebar` and other config in `astro.config.mjs`.
-	</Card>
-	<Card title="Read the docs" icon="open-book">
-		Learn more in [the Starlight Docs](https://starlight.astro.build/).
-	</Card>
-</CardGrid>
+## What This Is
+
+This is a **practical workshop** focused on adopting **Nix** as a solution to real, recurring problems in software development:
+
+- Fragile development environments  
+- Inconsistent builds across machines and CI  
+- Hidden differences between dev, CI, and production  
+
+The goal is not to teach Nix exhaustively, but to teach **enough Nix to solve real problems**.
+
+---
+
+## Why Nix
+
+Many teams already try to improve stability using tools like:
+- language package managers
+- lockfiles
+- Docker
+- CI pipelines
+
+These help — but they only solve parts of the problem.
+
+Nix approaches the problem at the system level, providing:
+- **reproducible builds**
+- **predictable development environments**
+- **safer dependency upgrades**
+- **clearer security and CVE response**
+- **stronger guarantees across dev, CI, and production**
+
+---
+
+## Beyond Local Development
+
+The workshop also covers using Nix to manage **deployment artifacts and runtime environments**, including Kubernetes.
+
+This includes:
+- generating Kubernetes manifests reproducibly
+- sharing configuration safely across services
+- reducing copy-paste YAML drift
+- validating changes through builds and tests
+- promoting known-good configurations through environments
+
+The focus is on **making Kubernetes changes boring, repeatable, and auditable**.
+
+---
+
+## What the Workshop Focuses On
+
+This workshop is designed to take participants:
+
+> **From zero → to knowing enough Nix to use it confidently and productively**
+
+The emphasis is on:
+- hands-on usage
+- real workflows
+- understanding tradeoffs
+- avoiding unnecessary theory
+
+Participants will learn how to:
+- use Nix for development environments
+- build and test real software with Nix
+- understand basic Nix expressions
+- work with flakes and reproducible inputs
+- read and modify simple NixOS modules
+- manage reproducible Kubernetes configurations
+
+---
+
+## Who This Is For
+
+- Engineers new to Nix
+- Teams considering adopting Nix
+- Organizations struggling with build, environment, and deployment stability
+- Anyone responsible for maintaining reliable software systems
+
+No prior Nix experience is required.
+
+---
+
+## What Success Looks Like
+
+After the workshop, participants will:
+- understand when Nix is the right tool
+- feel comfortable using Nix day-to-day
+- know how to debug common issues
+- be able to apply Nix to real problems in their own environment
+
+The goal is **confidence and orientation**, not mastery.
+
+---
+
+## Format
+
+- Short, focused sessions  
+- Hands-on, live walkthroughs  
+- Real examples and workflows  
+- Honest discussion of tradeoffs and limitations  
+
+---
+
+## Ownership
+
+This workshop and its materials are independently authored and maintained.
+
+---
+
+If you’re interested in adopting Nix to improve stability, safety, and predictability across development, CI, and Kubernetes environments, this workshop is designed to help you get there.

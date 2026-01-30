@@ -1,0 +1,255 @@
+---
+title: Motivation
+description: Why.
+---
+
+import RevealEmbed from "../../../components/RevealEmbed.astro";
+
+## Why Nix?
+
+<RevealEmbed file="motivation-slides.md" theme="sky" height="80vh" />
+
+## Broken Window Fallacy
+
+![Bastiat](/images/broken-window-fallacy.png)
+
+## Broken Window Examples
+
+<RevealEmbed file="broken-windows.md" theme="sky" height="80vh" />
+
+## Nix Warts
+
+### Language
+
+- Non-mainstream syntax
+- Laziness surprises
+- Poor error messages
+- Reading is easier than writing
+- Debugging can feel indirect
+
+#### Purity & Friction
+
+- “Why can’t I just curl this thing?”
+- “Why is this forbidden?”
+- “Why do I need to declare this explicitly?”
+
+#### Learning Curve
+
+- Steep initial slope
+- Feels slower before it feels faster
+- Easy to feel blocked early on
+
+#### Documentation and tooling
+
+- documentation -> Could be better
+- ide support -> Could be better
+
+#### Why these warts exist
+
+| Frustration      | What It Enforces           |
+| ---------------- | -------------------------- |
+| No implicit deps | Explicit dependency graphs |
+| No global state  | Reproducibility            |
+| No network       | Hermetic builds            |
+| Immutable store  | Rollbacks & safety         |
+| Weird language   | Laziness + composability   |
+
+#### Nix makes you pay the cost upfront
+
+Nix charges you early for mistakes you normally pay for later.
+| | |
+|--|--|
+| Missing dependency | caught at build time, not prod |
+| Undeclared tool | caught immediately, not on a coworker’s laptop |
+| Drift | impossible, not “unlikely” |
+| extensibility | add/change functionality without touching old code |
+
+#### The Honest Promise
+
+Nix doesn’t save time immediately. It stops time from leaking later.
+
+## Comparing to other solutions
+
+Surely something else exists that is comparable. Right?
+
+### Docker
+
+#### How Docker Builds Really Work
+
+- Docker Builds Are Filesystem-Based, Not Dependency-Based
+- Docker images are built as a stack of filesystem layers
+- Each instruction in a Dockerfile (RUN, COPY, ADD, etc.) creates a new layer
+
+Layers record:
+
+- file additions
+- file deletions
+- file modifications
+
+Docker does not understand:
+
+- why a file exists
+- which files are dependencies vs outputs
+- which tools were actually used
+
+```
+# Dockerfile
+FROM ubuntu:22.04
+RUN apt-get update && apt-get install -y curl wget vim 
+RUN echo "Hello from Docker!" > /hello.txt
+CMD ["cat", "/hello.txt"]
+```
+
+#### What Docker Does Well
+
+- Produces a runnable, isolated filesystem snapshot
+- Ensures runtime parity between machines
+- Freezes results, not process
+
+#### What Docker Cannot Guarantee
+
+- Deterministic builds over time
+- Reproducible images from the same Dockerfile
+- Explicit dependency graphs
+- Hermetic builds
+
+#### Implications
+
+- Docker tracks what changed on disk, not what the build depends on.
+- Docker isolates well, but doesn't integrate well
+- half tools on local machine, half the tools inside docker images
+
+
+### Others
+
+The industry keeps independently rediscovering the same problems — and inventing partial solutions inside narrower scopes.
+
+Nix didn’t invent these concerns. It’s the first tool that tries to solve them generally, instead of per-language or per-runtime.
+
+- asdf / mise – great for tools, not system deps, no purity
+- devcontainers – good UX, still Docker-centric, heavy
+- bazel / pants – excellent builds, weak local dev ergonomics
+- ansible / chef / salt – fleet config, poor dev loop
+- homebrew + scripts – works… until it doesn’t
+
+# Case Studies
+
+## Yarn
+
+### What Yarn Was Trying to Fix
+
+- Non-deterministic installs (package.json alone was not enough)
+- “Works on my machine” caused by solver drift
+- Hidden transitive dependency changes
+- Slow, stateful installs
+
+### How Yarn Addressed It
+
+- Lockfiles (yarn.lock) → explicit dependency graphs
+- Deterministic resolution → same tree everywhere
+- Content-addressed cache → reuse instead of rebuild
+- Offline installs → fewer hidden dependencies
+
+### Why This Matters
+
+Yarn is an admission that imperative package installs are not reliable
+
+#### The industry accepted:
+
+- reproducibility matters
+- dependency graphs must be explicit
+
+#### Where Yarn Falls Short (By Design)
+
+- Only governs JavaScript dependencies
+- Assumes the system environment already works
+
+#### Cannot model:
+
+- compilers
+- native libraries
+- OS differences
+- build tools
+
+
+## SBT (Simple Build Tool)
+
+sbt wasn’t meant to be "just Scala’s Maven."
+
+### Its original ambitions:
+- Incremental builds
+- Precise dependency tracking
+- Declarative build definitions
+- Programmatic builds (builds as code)
+- Cross-project composition
+- Sound familiar again?
+
+### sbt introduced:
+
+- Fine-grained incremental compilation
+- Task graphs
+- Dependency-aware caching
+- Build definitions as Scala code
+
+### These ideas later influenced:
+
+- Bazel
+- Pants
+- Buck
+- Gradle
+
+
+### Simple build tool -> Scala build tool
+
+#### Design implications
+
+1. Host Environment Leakage
+2. Non-Hermetic Builds
+3. Scope Explosion
+
+#### User experience
+
+- Hard to reason about
+- Hard to standardize
+- Hard to cache globally
+
+
+## Haskell
+
+Haskell learned to treat dependency updates like a pipeline, not a fire drill
+
+### Historical Versioning Problems
+- Lots of small libraries
+- Deep dependency trees
+- Frequent upstream changes
+- Builds breaking due to solver drift / native deps
+
+### What emerged 
+- Pin a complete package universe (compiler + libraries + native deps).
+- Make updates mechanical (not artisanal).
+- Build everything automatically to see what breaks.
+- Treat breakage as data (a matrix), not a surprise.
+- Promote only the green set into the “blessed” environment.
+
+
+# Landing on nix
+
+## Considering the problem
+
+Given the constraints of:
+
+- reproducibility
+- composability
+- local developer ergonomics
+- production integration
+- long-term maintenance
+
+## Considering the available solutions
+
+- Docker
+- bazel
+- pants
+
+## Conclusion. 
+
+Nix is the only tool I’ve found that makes the full set of tradeoffs explicit and survivable.

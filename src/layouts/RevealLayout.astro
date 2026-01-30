@@ -1,0 +1,40 @@
+---
+const { title = "Slides", theme = "black" } = Astro.props;
+
+// Note: Reveal theme files live at reveal.js/dist/theme/<name>.css
+const themeHref = `/reveal-theme/${theme}.css`;
+---
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>{title}</title>
+
+    <!-- Core reveal styles -->
+    <link rel="stylesheet" href="/reveal-core/reveal.css" />
+    <link rel="stylesheet" href={themeHref} />
+  </head>
+
+  <body>
+    <div class="reveal">
+      <div class="slides">
+        <slot />
+      </div>
+    </div>
+
+    <script type="module">
+      import Reveal from "reveal.js";
+      import Markdown from "reveal.js/plugin/markdown/markdown.esm.js";
+      import Highlight from "reveal.js/plugin/highlight/highlight.esm.js";
+      import Notes from "reveal.js/plugin/notes/notes.esm.js";
+
+      const deck = new Reveal({
+        hash: true,
+        plugins: [Markdown, Highlight, Notes],
+      });
+
+      deck.initialize();
+    </script>
+  </body>
+</html>

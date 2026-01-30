@@ -1,0 +1,76 @@
+---
+import revealCss from "reveal.js/dist/reveal.css?url";
+import highlightCss from "reveal.js/plugin/highlight/monokai.css?url";
+
+import themeBlack from "reveal.js/dist/theme/black.css?url";
+import themeWhite from "reveal.js/dist/theme/white.css?url";
+import themeLeague from "reveal.js/dist/theme/league.css?url";
+import themeBeige from "reveal.js/dist/theme/beige.css?url";
+import themeNight from "reveal.js/dist/theme/night.css?url";
+import themeSerif from "reveal.js/dist/theme/serif.css?url";
+import themeSimple from "reveal.js/dist/theme/simple.css?url";
+import themeSky from "reveal.js/dist/theme/sky.css?url";
+import themeSolarized from "reveal.js/dist/theme/solarized.css?url";
+import themeMoon from "reveal.js/dist/theme/moon.css?url";
+import themeBlood from "reveal.js/dist/theme/blood.css?url";
+
+// IMPORTANT: load client module as a URL so Vite handles deps
+import revealEmbedModuleUrl from "../scripts/reveal-embed.ts?url";
+
+type Props = {
+  file: string;         // "intro.md" or "talks/intro.md"
+  theme?: string;
+  height?: string;
+  hash?: boolean;       // whether reveal hash navigation is enabled
+};
+
+const { file, theme = "black", height = "70vh", hash = false } = Astro.props;
+
+const themeMap: Record<string, string> = {
+  black: themeBlack,
+  white: themeWhite,
+  league: themeLeague,
+  beige: themeBeige,
+  night: themeNight,
+  serif: themeSerif,
+  simple: themeSimple,
+  sky: themeSky,
+  solarized: themeSolarized,
+  moon: themeMoon,
+  blood: themeBlood,
+};
+const themeCss = themeMap[theme] ?? themeMap.black;
+
+// Load slides from .md as raw text
+const slideFiles = import.meta.glob("../slides/**/*.md", {
+  query: "?raw",
+  import: "default",
+  eager: true,
+}) as Record<string, string>;
+
+const matchPath = Object.keys(slideFiles).find((p) => p.endsWith(`/slides/${file}`));
+if (!matchPath) throw new Error(`RevealEmbed: slide file not found: ${file}`);
+
+const markdown = slideFiles[matchPath];
+---
+
+<link rel="stylesheet" href={revealCss} />
+<link rel="stylesheet" href={themeCss} />
+<link rel="stylesheet" href={highlightCss} />
+
+<div
+  data-reveal-embed
+  data-hash={hash ? "true" : "false"}
+  style={`height:${height}; margin: 1rem 0;`}
+>
+  <div class="reveal" style="height: 100%;">
+    <div class="slides">
+      <section data-markdown>
+        <textarea data-template>{markdown}</textarea>
+      </section>
+    </div>
+  </div>
+</div>
+
+<!-- Load the bundled init module once; it will init all embeds on the page -->
+<script type="module" src={revealEmbedModuleUrl}></script>
