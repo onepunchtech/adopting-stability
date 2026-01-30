@@ -3,6 +3,8 @@ import { defineConfig } from "astro/config";
 import starlight from "@astrojs/starlight";
 import mermaid from "astro-mermaid";
 
+import cloudflare from "@astrojs/cloudflare";
+
 // https://astro.build/config
 export default defineConfig({
   integrations: [
@@ -67,4 +69,8 @@ export default defineConfig({
       ],
     }),
   ],
+  adapter: cloudflare({
+    platformProxy: { enabled: true },
+  }),
 });
+
