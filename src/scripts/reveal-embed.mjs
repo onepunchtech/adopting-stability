@@ -3,24 +3,22 @@ import Markdown from "reveal.js/plugin/markdown/markdown.esm.js";
 import Highlight from "reveal.js/plugin/highlight/highlight.esm.js";
 import Notes from "reveal.js/plugin/notes/notes.esm.js";
 
-type Options = { hash?: boolean };
-
-function initOne(root: HTMLElement, opts: Options) {
-  const revealEl = root.querySelector<HTMLElement>(".reveal");
+function initOne(root) {
+  const revealEl = root.querySelector(".reveal");
   if (!revealEl) return;
 
-  // Make it focusable so keyboardCondition:'focused' can work reliably
+  // Make it focusable (helps multi-embed fullscreen with keyboardCondition)
   revealEl.tabIndex = 0;
-
-  // Click anywhere in this embed -> focus it (so F affects this deck)
   root.addEventListener("pointerdown", () => revealEl.focus(), {
     passive: true,
   });
 
+  const hash = root.dataset.hash === "true";
+
   const deck = new Reveal(revealEl, {
     embedded: true,
-    keyboardCondition: "focused", // key fix for multiple embeds
-    hash: opts.hash ?? false,
+    keyboardCondition: "focused",
+    hash,
     plugins: [Markdown, Highlight, Notes],
   });
 
@@ -30,9 +28,4 @@ function initOne(root: HTMLElement, opts: Options) {
   ro.observe(root);
 }
 
-document
-  .querySelectorAll<HTMLElement>("[data-reveal-embed]")
-  .forEach((root) => {
-    const hash = root.dataset.hash === "true";
-    initOne(root, { hash });
-  });
+document.querySelectorAll("[data-reveal-embed]").forEach(initOne);
