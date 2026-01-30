@@ -4,44 +4,30 @@ import highlightCss from "reveal.js/plugin/highlight/monokai.css?url";
 
 import themeBlack from "reveal.js/dist/theme/black.css?url";
 import themeWhite from "reveal.js/dist/theme/white.css?url";
-import themeLeague from "reveal.js/dist/theme/league.css?url";
-import themeBeige from "reveal.js/dist/theme/beige.css?url";
 import themeNight from "reveal.js/dist/theme/night.css?url";
-import themeSerif from "reveal.js/dist/theme/serif.css?url";
 import themeSimple from "reveal.js/dist/theme/simple.css?url";
-import themeSky from "reveal.js/dist/theme/sky.css?url";
 import themeSolarized from "reveal.js/dist/theme/solarized.css?url";
-import themeMoon from "reveal.js/dist/theme/moon.css?url";
-import themeBlood from "reveal.js/dist/theme/blood.css?url";
-
-// IMPORTANT: load client module as a URL so Vite handles deps
-import revealEmbedModuleUrl from "../scripts/reveal-embed.mjs?url";
+import themeSky from "reveal.js/dist/theme/sky.css?url";
 
 type Props = {
-  file: string;         // "intro.md" or "talks/intro.md"
-  theme?: string;
-  height?: string;
-  hash?: boolean;       // whether reveal hash navigation is enabled
+  file: string;        // e.g. "motivation.md" or "talks/motivation.md"
+  theme?: string;      // black | white | night | simple | solarized
+  height?: string;     // e.g. "60vh"
+  hash?: boolean;
 };
 
-const { file, theme = "black", height = "70vh", hash = false } = Astro.props;
+const { file, theme = "sky", height = "70vh", hash = false } = Astro.props;
 
 const themeMap: Record<string, string> = {
   black: themeBlack,
   white: themeWhite,
-  league: themeLeague,
-  beige: themeBeige,
   night: themeNight,
-  serif: themeSerif,
   simple: themeSimple,
-  sky: themeSky,
   solarized: themeSolarized,
-  moon: themeMoon,
-  blood: themeBlood,
+  sky: themeSky,
 };
 const themeCss = themeMap[theme] ?? themeMap.black;
 
-// Load slides from .md as raw text
 const slideFiles = import.meta.glob("../slides/**/*.md", {
   query: "?raw",
   import: "default",
@@ -52,6 +38,9 @@ const matchPath = Object.keys(slideFiles).find((p) => p.endsWith(`/slides/${file
 if (!matchPath) throw new Error(`RevealEmbed: slide file not found: ${file}`);
 
 const markdown = slideFiles[matchPath];
+
+// give each embed a stable unique id
+const id = `reveal-${Math.random().toString(36).slice(2)}`;
 ---
 
 <link rel="stylesheet" href={revealCss} />
@@ -59,6 +48,7 @@ const markdown = slideFiles[matchPath];
 <link rel="stylesheet" href={highlightCss} />
 
 <div
+  id={id}
   data-reveal-embed
   data-hash={hash ? "true" : "false"}
   style={`height:${height}; margin: 1rem 0;`}
@@ -72,5 +62,31 @@ const markdown = slideFiles[matchPath];
   </div>
 </div>
 
-<!-- Load the bundled init module once; it will init all embeds on the page -->
-<script type="module" src={revealEmbedModuleUrl}></script>
+<script type="module" define:vars={{ id }}>
+  import Reveal from "https://cdn.jsdelivr.net/npm/reveal.js@5/dist/reveal.esm.js";
+  import Markdown from "https://cdn.jsdelivr.net/npm/reveal.js@5/plugin/markdown/markdown.esm.js";
+  import Highlight from "https://cdn.jsdelivr.net/npm/reveal.js@5/plugin/highlight/highlight.esm.js";
+  import Notes from "https://cdn.jsdelivr.net/npm/reveal.js@5/plugin/notes/notes.esm.js";
+
+  const root = document.getElementById(id);
+  const revealEl = root?.querySelector(".reveal");
+  if (!revealEl) {
+    console.warn("RevealEmbed: .reveal element not found for", id);
+  } else {
+    // Focus = controls fullscreen target when multiple embeds exist
+    revealEl.tabIndex = 0;
+    root.addEventListener("pointerdown", () => revealEl.focus(), { passive: true });
+
+    const deck = new Reveal(revealEl, {
+      embedded: true,
+      keyboardCondition: "focused",
+      hash: root.dataset.hash === "true",
+      plugins: [Markdown, Highlight, Notes],
+    });
+
+    deck.initialize();
+
+    const ro = new ResizeObserver(() => deck.layout());
+    ro.observe(root);
+  }
+</script>
