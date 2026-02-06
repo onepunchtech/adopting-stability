@@ -50,18 +50,26 @@ If you see that, Nix is working.
 
 ## macOS
 
-Install Nix (multi-user, recommended)
+On macOS, the recommended way to install Nix is using the **Determinate Systems installer**.
+It installs **upstream Nix**, not a fork, and handles macOS-specific details cleanly.
+
+This is the installer we will use for the workshop.
+
+---
 
 ```
-curl -L https://nixos.org/nix/install | sh -s -- --daemon
+
+curl -fsSL https://install.determinate.systems/nix | sh -s -- install --use-upstream-nix
+
 ```
 
 You’ll be prompted for your password to set up the daemon and launchd services.
 
 Restart your terminal afterward.
 
-```
 Enable flakes
+
+```
 mkdir -p ~/.config/nix
 cat <<EOF >> ~/.config/nix/nix.conf
 experimental-features = nix-command flakes

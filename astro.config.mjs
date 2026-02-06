@@ -46,17 +46,22 @@ export default defineConfig({
           label: "Practical Usage",
           items: ["using-nix"],
         },
-        // {
-        //   label: "Building & Packaging",
-        //   items: ["builds-and-derivations", "custom-packages", "overlays"],
-        // },
-        // {
-        //   label: "Composition & Sharing",
-        //   items: ["shared-config", "update-workflows"],
-        // },
+        {
+          label: "Language",
+          items: ["primer", "language-practice"],
+        },
+        {
+          label: "Building & Packaging",
+          items: ["flakes", "builds-and-derivations"],
+        },
         // {
         //   label: "Systems & Deployment",
-        //   items: ["nixos-overview", "modules", "kubernetes"],
+        //   items: [
+        //     "nixos-overview",
+        //     "custom-modules",
+        //     "kubernetes",
+        //     "terraform",
+        //   ],
         // },
         // {
         //   label: "Tradeoffs & Adoption",
@@ -73,4 +78,3 @@ export default defineConfig({
     platformProxy: { enabled: true },
   }),
 });
-
