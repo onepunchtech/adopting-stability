@@ -52,7 +52,18 @@ export default defineConfig({
         },
         {
           label: "Building & Packaging",
-          items: ["flakes", "builds-and-derivations"],
+          items: [
+            { label: "Flakes", slug: "building-packaging/flakes" },
+            {
+              label: "Builds and Derivations",
+              slug: "building-packaging/builds-and-derivations",
+            },
+            { label: "Docker Images", slug: "building-packaging/docker" },
+          ],
+        },
+        {
+          label: "Cheatsheets",
+          items: [{ label: "Flakes", slug: "cheatsheets/flakes" }],
         },
         // {
         //   label: "Systems & Deployment",

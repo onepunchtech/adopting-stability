@@ -49,17 +49,41 @@ pkgs.stdenv.mkDerivation
 
 A minimal example:
 
+### `src/hello.c`
+
+```c
+#include <stdio.h>
+
+int main(int argc, char *argv[]) {
+    const char *name = (argc > 1) ? argv[1] : "world";
+    printf("hello, %s!\n", name);
+    return 0;
+}
+```
+
+### Derivation
+
 ```nix
 pkgs.stdenv.mkDerivation {
-  pname = "example";
+  pname = "hello-c";
   version = "1.0";
 
   src = ./src;
 
+  nativeBuildInputs = [ pkgs.gcc ];
+
+  buildPhase = ''
+    gcc hello.c -o hello
+  '';
+
   installPhase = ''
     mkdir -p $out/bin
-    cp myprog $out/bin/
+    cp hello $out/bin/
   '';
+
+  meta = {
+    description = "Simple hello world C program";
+  };
 }
 ```
 
